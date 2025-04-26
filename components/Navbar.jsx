@@ -32,9 +32,9 @@ export default function Navbar() {
                 <Link href="/my-books" className="hover:text-blue-200">
                   My Books
                 </Link>
-                <Link href="/discover" className="hover:text-blue-200">
+                {/* <Link href="/discover" className="hover:text-blue-200">
                   Discover
-                </Link>
+                </Link> */}
                 <button 
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className="hover:text-blue-200"

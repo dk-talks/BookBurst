@@ -1,10 +1,9 @@
 // components/BookCard.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BookType } from "../app/types";
-import {useEffect } from "react";
 
 interface BookCardProps {
   book: BookType;  // Use the same BookType interface from above
@@ -91,6 +90,7 @@ export default function BookCard({
 
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
 
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (showStatusDropdown && !(event.target as HTMLElement).closest('.dropdown')) {
@@ -105,11 +105,8 @@ export default function BookCard({
   }, [showStatusDropdown]);
   
   
-  
-  
-
   return (
-    <div className="relative overflow-hidden rounded-lg border shadow-sm transition hover:shadow">
+    <div className="overflow-hidden rounded-lg border shadow-sm transition hover:shadow">
       <div className="flex h-full flex-col">
         <div 
           className="flex cursor-pointer p-4" 
@@ -183,19 +180,26 @@ export default function BookCard({
         {!isDiscoverCard && (
           <div className="mt-auto border-t bg-gray-50 p-3">
             <div className="flex justify-between">
+              
+
+
             <div className="dropdown relative">
                 <button
                   className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:bg-blue-300"
                   disabled={isUpdating}
-                  onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering handleView
+                    setShowStatusDropdown(!showStatusDropdown);
+                  }}
                 >
                   {isUpdating ? "Updating..." : "Change Status"}
                 </button>
                 {showStatusDropdown && (
-                  <div className="absolute left-0 mt-1 w-40 rounded border bg-white shadow-lg z-50">
+                  <div className="absolute top-0 left-0 -translate-y-full mt-2 w-40 rounded border bg-white shadow-lg z-50">
                     <button
                       className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering handleView
                         handleStatusChange("reading");
                         setShowStatusDropdown(false);
                       }}
@@ -204,7 +208,8 @@ export default function BookCard({
                     </button>
                     <button
                       className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering handleView
                         handleStatusChange("finished");
                         setShowStatusDropdown(false);
                       }}
@@ -213,7 +218,8 @@ export default function BookCard({
                     </button>
                     <button
                       className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering handleView
                         handleStatusChange("want-to-read");
                         setShowStatusDropdown(false);
                       }}
@@ -223,7 +229,8 @@ export default function BookCard({
                   </div>
                 )}
               </div>
-          
+              
+              
               <button
                 className="rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
                 onClick={() => setShowConfirmDelete(true)}

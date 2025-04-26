@@ -45,13 +45,13 @@ export default function Dashboard() {
           <p className="text-gray-600">Manage your reading list and track your progress</p>
         </Link>
         
-        <Link 
+        {/* <Link 
           href="/discover"
           className="flex h-48 flex-col items-center justify-center rounded-lg bg-purple-100 p-6 text-center transition hover:bg-purple-200"
         >
           <h2 className="mb-2 text-2xl font-semibold">Discover Books</h2>
           <p className="text-gray-600">Find new books and see what others are reading</p>
-        </Link>
+        </Link> */}
         
         <Link 
           href="/profile"

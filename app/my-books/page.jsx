@@ -17,13 +17,14 @@ export default function MyBooks() {
   const [isAddingBook, setIsAddingBook] = useState(false);
   // Use the official useCookies hook
   const [cookies, setCookie] = useCookies(["lastBookshelfTab"]);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
   
-  // Set last active tab from cookie when component mounts
   useEffect(() => {
-    if (cookies.lastBookshelfTab) {
+    if (!initialLoadDone && cookies.lastBookshelfTab) {
       setActiveTab(cookies.lastBookshelfTab);
+      setInitialLoadDone(true);
     }
-  }, [cookies.lastBookshelfTab]);
+  }, [cookies.lastBookshelfTab, initialLoadDone]);
   
   // Fetch books when component mounts or tab changes
   useEffect(() => {
@@ -36,11 +37,6 @@ export default function MyBooks() {
       fetchBooks(activeTab);
     }
   }, [status, router, activeTab]);
-  
-  // Save active tab to cookie when it changes
-  useEffect(() => {
-    setCookie("lastBookshelfTab", activeTab, { path: "/" });
-  }, [activeTab, setCookie]);
   
 
   const fetchBooks = async (tabStatus) => {
@@ -76,6 +72,7 @@ export default function MyBooks() {
   
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    setCookie("lastBookshelfTab", tab, { path: "/" });
   };
   
   const handleAddBook = async (book) => {
