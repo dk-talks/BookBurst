@@ -1,7 +1,7 @@
 // app/api/books/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/auth";
 import dbConnect from "@/lib/mongodb";
 import Book from "@/models/Book";
 
@@ -23,7 +23,12 @@ export async function GET(request: NextRequest) {
     
     await dbConnect();
     
-    const query: any = { user: session.user.id };
+    interface BookQuery {
+      user: string;
+      status?: string;
+    }
+    
+    const query: BookQuery = { user: session.user.id! };
     
     // Filter by status if provided
     if (status && ["reading", "finished", "want-to-read"].includes(status)) {
@@ -37,9 +42,10 @@ export async function GET(request: NextRequest) {
     console.log(`Found ${books.length} books`);
     
     return NextResponse.json({ books });
-  } catch (error: any) {
-    console.error("Error fetching books:", error);
-    return NextResponse.json({ message: "Server error", error: error.message }, { status: 500 });
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error:", errorMessage);
+    return NextResponse.json({ message: "Server error", error: errorMessage }, { status: 500 });
   }
 }
 
@@ -92,11 +98,9 @@ export async function POST(request: NextRequest) {
     
     console.log("Book created successfully:", newBook._id);
     return NextResponse.json({ book: newBook }, { status: 201 });
-  } catch (error: any) {
-    console.error("Error adding book:", error);
-    return NextResponse.json(
-      { message: "Server error", details: error.message },
-      { status: 500 }
-    );
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error:", errorMessage);
+    return NextResponse.json({ message: "Server error", error: errorMessage }, { status: 500 });
   }
 }

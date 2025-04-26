@@ -1,7 +1,7 @@
 // app/api/search/books/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "../../auth//auth";
 
 export async function GET(request: NextRequest) {
   try {
@@ -110,11 +110,9 @@ export async function GET(request: NextRequest) {
         { status: 500 }
       );
     }
-  } catch (error: any) {
-    console.error("Unexpected error in book search API:", error);
-    return NextResponse.json({ 
-      message: "Server error", 
-      details: error.message 
-    }, { status: 500 });
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error:", errorMessage);
+    return NextResponse.json({ message: "Server error", error: errorMessage }, { status: 500 });
   }
 }

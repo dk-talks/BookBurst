@@ -1,53 +1,48 @@
 // app/login/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function Login() {
+// Create a separate component for the part that uses useSearchParams
+function LoginForm() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  
+  // Get search params here
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const isRegistered = searchParams.get("registered") === "true";
 
-  // Add this effect to handle redirection when session changes
   useEffect(() => {
     if (status === "authenticated" && session) {
-      console.log("User authenticated, redirecting to:", callbackUrl);
       router.replace(callbackUrl);
     }
   }, [session, status, router, callbackUrl]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-  
+
     try {
-      console.log("Attempting to sign in with:", { email });
-      
       const result = await signIn("credentials", {
         redirect: false,
         email,
         password,
       });
-  
-      console.log("Sign in result:", result);
-  
+
       if (result?.error) {
         setError("Invalid email or password");
         setLoading(false);
         return;
       }
-  
-      // The useEffect above will handle the redirection once session is updated
     } catch (error) {
       console.error("Login error:", error);
       setError("Something went wrong. Please try again.");
@@ -55,9 +50,7 @@ export default function Login() {
     }
   };
 
-  // If already authenticated, redirect immediately
   if (status === "authenticated") {
-    router.replace(callbackUrl);
     return <div className="text-center py-8">Redirecting to dashboard...</div>;
   }
 
@@ -124,5 +117,14 @@ export default function Login() {
         </p>
       </div>
     </div>
+  );
+}
+
+// Main login page component with Suspense boundary
+export default function Login() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

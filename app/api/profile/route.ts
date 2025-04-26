@@ -1,11 +1,11 @@
 // app/api/profile/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/auth";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -22,9 +22,10 @@ export async function GET(request: NextRequest) {
     }
     
     return NextResponse.json({ user });
-  } catch (error: any) {
-    console.error("Error fetching profile:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error:", errorMessage);
+    return NextResponse.json({ message: "Server error", error: errorMessage }, { status: 500 });
   }
 }
 
@@ -72,8 +73,9 @@ export async function PUT(request: NextRequest) {
         image: user.image,
       },
     });
-  } catch (error: any) {
-    console.error("Error updating profile:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error:", errorMessage);
+    return NextResponse.json({ message: "Server error", error: errorMessage }, { status: 500 });
   }
 }

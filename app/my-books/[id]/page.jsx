@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import RatingStars from "@/components/RatingStars";
+import Image from 'next/image';
 
 export default function BookDetail({ params }) {
   const { id } = params;

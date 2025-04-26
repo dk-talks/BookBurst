@@ -41,7 +41,9 @@ export default function BookCard({
         throw new Error("Failed to update book status");
       }
       
-      onStatusChange && onStatusChange();
+      if (onStatusChange) {
+        onStatusChange();
+      }
     } catch (error) {
       console.error("Error updating book:", error);
     } finally {

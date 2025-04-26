@@ -45,9 +45,8 @@ export default function ReviewList({ googleBooksId, refreshTrigger = 0 }: Review
         
         const data = await response.json();
         setReviews(data.reviews);
-      } catch (err: any) {
-        setError(err.message || "Error loading reviews");
-        console.error(err);
+      } catch (error: Error | unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       } finally {
         setLoading(false);
       }

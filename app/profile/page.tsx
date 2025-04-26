@@ -74,11 +74,10 @@ export default function Profile() {
       }
 
       setSuccess("Profile updated successfully!");
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setUpdating(false);
-    }
+    } catch (error: Error | unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error("Error:", errorMessage);
+      }
   };
 
   if (loading) {

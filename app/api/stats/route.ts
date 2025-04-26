@@ -1,7 +1,7 @@
 // app/api/stats/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/auth";
 import dbConnect from "@/lib/mongodb";
 import Book from "@/models/Book";
 
@@ -28,8 +28,9 @@ export async function GET(request: NextRequest) {
       wantToRead,
       total: reading + finished + wantToRead,
     });
-  } catch (error: any) {
-    console.error("Error fetching stats:", error);
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("Error:", errorMessage);
+    return NextResponse.json({ message: "Server error", error: errorMessage }, { status: 500 });
   }
 }

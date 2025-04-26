@@ -62,8 +62,8 @@ export default function ReviewForm({ bookId, googleBooksId, onReviewSubmitted }:
       
       // Notify parent component
       onReviewSubmitted();
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     } finally {
       setLoading(false);
     }
